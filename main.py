@@ -170,6 +170,23 @@ class Game:
                     # 由boss发射的火球不会在与boss碰撞时被销毁
                     elif bullet.owner != 'boss':
                         bullet.kill()
+            
+            # 子弹与玩家碰撞
+            if pygame.sprite.collide_rect(bullet, self.player):
+                # 只有由boss发射的子弹才会对player造成伤害
+                if bullet.owner == 'boss' and not self.player.invincible:
+                    self.player.health -= 1
+                    if 'hit' in self.sounds:
+                        self.sounds['hit'].play()
+                    self.player.invincible = True
+                    self.player.invincible_timer = pygame.time.get_ticks()
+                    if self.player.health <= 0:
+                        self.current_state = GAME_STATE['game_over']
+                    # 由boss发射的子弹在与玩家碰撞后应该被销毁
+                    bullet.kill()
+                # 由player发射的子弹不会在与玩家碰撞时被销毁
+                elif bullet.owner != 'player':
+                    bullet.kill()
         
         # 玩家与敌人碰撞
         damaged = False
