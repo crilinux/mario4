@@ -113,9 +113,9 @@ class GoombaBoss(Boss):
             from enemy import Mushroom
             return Mushroom(random.randint(100, 700), 100)
         elif attack_type == 4:
-            # 发射子弹
-            from bullet import Bullet
-            return Bullet(self.rect.centerx, self.rect.centery, player.rect.x > self.rect.x)
+            # 发射火球
+            from bullet import Fireball
+            return Fireball(self.rect.centerx, self.rect.centery, player.rect.x > self.rect.x, owner='boss')
     
     def ai_update(self, player):
         # 护盾阶段
@@ -185,8 +185,9 @@ class BowserBoss(Boss):
         
         if attack_type == 1:
             # 远程火球
-            from bullet import Bullet
-            return Bullet(self.rect.centerx, self.rect.centery, player.rect.x > self.rect.x)
+            from bullet import Fireball
+            print("Boss发射了火球")
+            return Fireball(self.rect.centerx, self.rect.centery, player.rect.x > self.rect.x, owner='boss')
         elif attack_type == 2:
             # 瞬移
             self.rect.x = random.randint(100, 700)

@@ -124,10 +124,6 @@ class Level:
         for enemy in self.enemies:
             enemy.draw(screen)
         
-        # 绘制Boss
-        if self.boss:
-            self.boss.draw(screen)
-        
         # 绘制道具
         for item in self.items:
             item.draw(screen)

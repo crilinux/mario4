@@ -127,19 +127,22 @@ class Game:
             
             # 处理Boss攻击返回的子弹
             if attack_result:
-                # 检查返回的是否是子弹
-                from bullet import Bullet
+                # 检查返回的是否是子弹或火球
+                from bullet import Bullet, Fireball
                 from enemy import Enemy
-                if isinstance(attack_result, Bullet):
+                if isinstance(attack_result, Fireball):
                     self.bullets.add(attack_result)
-                    print("Boss发射了子弹")
+                    print("Boss发射了攻击Fireball")
                 elif isinstance(attack_result, Enemy):
                     print("Boss召唤了敌人")
                 else:
                     print("Boss的攻击结果:", type(attack_result))
+            # 打印子弹数量
+            # print(f"子弹数量: {len(self.bullets)}")
             
             # 更新子弹
-            for bullet in self.bullets:
+            for i, bullet in enumerate(self.bullets):
+                print(f"更新子弹 {i}: {type(bullet).__name__}, 速度: {bullet.speed_x}")
                 bullet.update()
             
             # 碰撞检测
@@ -159,9 +162,14 @@ class Game:
             # 子弹与Boss碰撞
             if self.level.boss:
                 if pygame.sprite.collide_rect(bullet, self.level.boss):
-                    if not hasattr(self.level.boss, 'shielded') or not self.level.boss.shielded:
-                        self.level.boss.take_damage(1)
-                    bullet.kill()
+                    # 只有由player发射的子弹才会对boss造成伤害
+                    if bullet.owner == 'player':
+                        if not hasattr(self.level.boss, 'shielded') or not self.level.boss.shielded:
+                            self.level.boss.take_damage(1)
+                        bullet.kill()
+                    # 由boss发射的火球不会在与boss碰撞时被销毁
+                    elif bullet.owner != 'boss':
+                        bullet.kill()
         
         # 玩家与敌人碰撞
         damaged = False
@@ -213,13 +221,17 @@ class Game:
     
     def draw(self):
         if self.current_state == GAME_STATE['playing'] or self.current_state == GAME_STATE['paused']:
-            # 绘制关卡
+            # 绘制关卡（不包括Boss）
             self.level.draw(self.screen)
             
             # 绘制玩家
             self.player.draw(self.screen)
             
-            # 绘制子弹
+            # 绘制Boss
+            if self.level.boss:
+                self.level.boss.draw(self.screen)
+            
+            # 绘制子弹（在Boss之后绘制，确保子弹可见）
             for bullet in self.bullets:
                 bullet.draw(self.screen)
             
