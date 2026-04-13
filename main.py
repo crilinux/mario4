@@ -123,7 +123,20 @@ class Game:
             self.player.update(self.level.platforms)
             
             # 更新关卡
-            self.level.update(self.player)
+            attack_result = self.level.update(self.player)
+            
+            # 处理Boss攻击返回的子弹
+            if attack_result:
+                # 检查返回的是否是子弹
+                from bullet import Bullet
+                from enemy import Enemy
+                if isinstance(attack_result, Bullet):
+                    self.bullets.add(attack_result)
+                    print("Boss发射了子弹")
+                elif isinstance(attack_result, Enemy):
+                    print("Boss召唤了敌人")
+                else:
+                    print("Boss的攻击结果:", type(attack_result))
             
             # 更新子弹
             for bullet in self.bullets:

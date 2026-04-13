@@ -5,14 +5,14 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, facing_right):
         super().__init__()
         # 创建子弹精灵（使用颜色块代替）
-        self.image = pygame.Surface((10, 10))
-        self.image.fill(YELLOW)
+        self.image = pygame.Surface((15, 15))
+        self.image.fill(RED)
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.centery = y
         
         # 子弹属性
-        self.speed_x = BULLET_SPEED if facing_right else -BULLET_SPEED
+        self.speed_x = BULLET_SPEED * 2 if facing_right else -BULLET_SPEED * 2
         self.speed_y = 0
     
     def update(self):

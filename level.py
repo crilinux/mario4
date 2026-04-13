@@ -97,12 +97,20 @@ class Level:
             enemy.update(self.platforms)
         
         # 更新Boss
+        attack_result = None
         if self.boss:
-            self.boss.update(self.platforms, player)
+            attack_result = self.boss.update(self.platforms, player)
+            if attack_result:
+                # 检查返回的是否是敌人
+                from enemy import Enemy
+                if isinstance(attack_result, Enemy):
+                    self.enemies.add(attack_result)
         
         # 更新道具
         for item in self.items:
             item.update()
+        
+        return attack_result
     
     def draw(self, screen):
         # 绘制背景

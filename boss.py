@@ -53,10 +53,13 @@ class Boss(pygame.sprite.Sprite):
         self.ai_update(player)
         
         # 攻击
+        attack_result = None
         current_time = pygame.time.get_ticks()
         if current_time - self.last_attack > self.attack_cooldown:
-            self.attack(player)
+            attack_result = self.attack(player)
             self.last_attack = current_time
+        
+        return attack_result
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -94,7 +97,7 @@ class GoombaBoss(Boss):
     
     def attack(self, player):
         # 随机选择攻击方式
-        attack_type = random.randint(1, 3)
+        attack_type = random.randint(1, 4)
         if attack_type == 1:
             # 冲撞攻击
             if player.rect.x > self.rect.x:
@@ -109,6 +112,10 @@ class GoombaBoss(Boss):
             # 召唤小怪
             from enemy import Mushroom
             return Mushroom(random.randint(100, 700), 100)
+        elif attack_type == 4:
+            # 发射子弹
+            from bullet import Bullet
+            return Bullet(self.rect.centerx, self.rect.centery, player.rect.x > self.rect.x)
     
     def ai_update(self, player):
         # 护盾阶段
